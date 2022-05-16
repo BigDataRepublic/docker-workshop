@@ -130,3 +130,5 @@ dmypy.json
 
 # others
 .idea/
+data/test_set.csv
+data/train_set.csv

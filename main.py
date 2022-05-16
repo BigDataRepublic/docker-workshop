@@ -1,7 +1,7 @@
-from fastapi import FastAPI
-import uvicorn
 import joblib
 import pandas as pd
+import uvicorn
+from fastapi import FastAPI
 
 app = FastAPI()
 
@@ -18,7 +18,11 @@ def welcome_msg():
 def return_prediction(query: str):
     query = pd.read_json(query)
     query = enc.transform(query)
-    return {"message": "Success", "Prediction": lgbm_model.predict(query)}
+    return {
+        "status_code": 200,
+        "message": "Success",
+        "prediction": lgbm_model.predict(query),
+    }
 
 
 if __name__ == "__main__":
