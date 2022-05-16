@@ -18,16 +18,16 @@ y = data["round_winner"]
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
 
-X_train.to_csv(os.getcwd() + "/data/train_set.csv")
-X_test.to_csv(os.getcwd() + "/data/test_set.csv")
+X_train.to_csv(os.getcwd() + "/data/train_set.csv", index=False)
+X_test.to_csv(os.getcwd() + "/data/test_set.csv", index=False)
 
 # one-hot encode categorical values
-enc = OneHotEncoder(handle_unknown='ignore')
-enc_df = pd.DataFrame(enc.fit_transform(X_train[['map']]).toarray())
+enc = OneHotEncoder(handle_unknown="ignore")
+enc_df = pd.DataFrame(enc.fit_transform(X_train[["map"]]).toarray())
 X_train = X_train.join(enc_df)
 X_train = X_train.drop("map", axis=1)
 
-enc_df = pd.DataFrame(enc.transform(X_test[['map']]).toarray())
+enc_df = pd.DataFrame(enc.transform(X_test[["map"]]).toarray())
 X_test = X_test.join(enc_df)
 X_test = X_test.drop("map", axis=1)
 
@@ -35,8 +35,6 @@ lgbm_model = lgb.LGBMClassifier(n_estimators=25000)
 lgbm_model.fit(X_train, y_train)
 
 print(lgbm_model.score(X_test, y_test))
-
-p = pickle.dumps(lgbm_model)
 
 dump(lgbm_model, "model/lgbm_model.joblib", compress=3)
 dump(enc, "model/encoder.joblib")

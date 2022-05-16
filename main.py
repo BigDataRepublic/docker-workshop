@@ -1,3 +1,5 @@
+import os
+
 import joblib
 import pandas as pd
 import uvicorn
@@ -7,22 +9,47 @@ app = FastAPI()
 
 lgbm_model = joblib.load("model/lgbm_model.joblib")
 enc = joblib.load("model/encoder.joblib")
+team_dict = {0: "CT", 1: "T"}
 
 
 @app.get("/")
 def welcome_msg():
+    """Welcome message to test the API."""
     return {"message": "Hello World!"}
 
 
-@app.post("/predict")
-def return_prediction(query: str):
-    query = pd.read_json(query)
-    query = enc.transform(query)
+@app.get("/test_numbers")
+def get_index_range():
+    """Get the index range of the saved test set to inform the user about the
+    possible indices to generate a prediction for.
+    """
+    data = pd.read_csv(os.getcwd() + "/data/test_set.csv")
     return {
         "status_code": 200,
-        "message": "Success",
-        "prediction": lgbm_model.predict(query),
+        "message": f"Provide any index in the following range to the predict function: {data.index}",
     }
+
+
+@app.post("/predict")
+def return_prediction(query: int):
+    data = pd.read_csv(os.getcwd() + "/data/test_set.csv")
+    enc_df = pd.DataFrame(enc.transform(data[["map"]]).toarray())
+    data = data.join(enc_df)
+    data = data.drop("map", axis=1)
+    try:
+        line = data.iloc[query]
+        pred = lgbm_model.predict([line])[0]
+        predicted_proba = lgbm_model.predict_proba([line])[0][pred]
+        pred_desc = team_dict[pred]
+        return {
+            "status_code": 200,
+            "message": f"Lgbm model predicts '{pred_desc}' with a probability of {predicted_proba}",
+        }
+    except IndexError:
+        return {
+            "status_code": 400,
+            "message": f"Failed to select index. Did you provide a number in the range {data.index}?",
+        }
 
 
 if __name__ == "__main__":
