@@ -2,11 +2,10 @@ import os
 
 import joblib
 import pandas as pd
-import uvicorn
 from fastapi import FastAPI
 
-lgbm_model = joblib.load("model/lgbm_model.joblib")
-enc = joblib.load("model/encoder.joblib")
+lgbm_model = joblib.load(os.getcwd() + "/model/lgbm_model.joblib")
+enc = joblib.load(os.getcwd() + "/model/encoder.joblib")
 team_dict = {0: "CT", 1: "T"}
 
 description = "# CS:GO gamewinner prediction API"
@@ -59,5 +58,5 @@ def return_prediction(query: int) -> dict:
         }
 
 
-if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8080, reload=True)
+# if __name__ == "__main__":
+#     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
