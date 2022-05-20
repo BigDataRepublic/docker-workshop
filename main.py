@@ -5,21 +5,23 @@ import pandas as pd
 import uvicorn
 from fastapi import FastAPI
 
-app = FastAPI()
-
 lgbm_model = joblib.load("model/lgbm_model.joblib")
 enc = joblib.load("model/encoder.joblib")
 team_dict = {0: "CT", 1: "T"}
 
+description = "# CS:GO gamewinner prediction API"
+
+app = FastAPI(description=description, debug=True)
+
 
 @app.get("/")
-def welcome_msg():
+def welcome_message() -> dict:
     """Welcome message to test the API."""
     return {"message": "Hello World!"}
 
 
 @app.get("/test_numbers")
-def get_index_range():
+def get_index_range() -> dict:
     """Get the index range of the saved test set to inform the user about the
     possible indices to generate a prediction for.
     """
@@ -31,7 +33,12 @@ def get_index_range():
 
 
 @app.post("/predict")
-def return_prediction(query: int):
+def return_prediction(query: int) -> dict:
+    """Return a prediction for a single example from the testset with our own ML model.
+
+    Args:
+        - query: integer with the index of the testset to generate a prediction for
+    """
     data = pd.read_csv(os.getcwd() + "/data/test_set.csv")
     enc_df = pd.DataFrame(enc.transform(data[["map"]]).toarray())
     data = data.join(enc_df)
@@ -53,4 +60,4 @@ def return_prediction(query: int):
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8080)
+    uvicorn.run("main:app", host="0.0.0.0", port=8080, debug=True, reload=True)
