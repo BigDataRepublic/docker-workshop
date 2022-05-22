@@ -2,25 +2,18 @@ import os
 
 import joblib
 import pandas as pd
-# import uvicorn
-from fastapi import FastAPI
+
 
 lgbm_model = joblib.load(os.getcwd() + "/model/lgbm_model.joblib")
 enc = joblib.load(os.getcwd() + "/model/encoder.joblib")
 team_dict = {0: "CT", 1: "T"}
 
-description = "# CS:GO gamewinner prediction API"
 
-app = FastAPI(description=description, debug=True)
-
-
-@app.get("/")
 def welcome_message() -> dict:
     """Welcome message to test the API."""
     return {"message": "Hello World!"}
 
 
-@app.get("/test_numbers")
 def get_index_range() -> dict:
     """Get the index range of the saved test set to inform the user about the
     possible indices to generate a prediction for.
@@ -32,7 +25,6 @@ def get_index_range() -> dict:
     }
 
 
-@app.post("/predict")
 def return_prediction(query: int) -> dict:
     """Return a prediction for a single example from the testset with our own ML model.
 
@@ -57,7 +49,3 @@ def return_prediction(query: int) -> dict:
             "status_code": 400,
             "message": f"Failed to select index. Did you provide a number in the range {data.index}?",
         }
-
-#
-# if __name__ == "__main__":
-#     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

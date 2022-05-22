@@ -1,16 +1,23 @@
-FROM python:3.8-slim-buster
+# specify base image
+FROM
 
-WORKDIR /app
+# set the working directory for any RUN, CMD and COPY instructions that follow
+WORKDIR
 
-# libgomp1 is needed for lightgbm
-RUN apt-get update && apt-get install libgomp1
+# install libgomp1, which is needed for lightgbm
+RUN
 
-COPY requirements.txt .
+# add requirements from your Docker client’s current directory
+COPY
 
-RUN pip install -r requirements.txt
+# install requirements
+RUN
 
-COPY . .
+# add all files from your Docker client’s current directory
+COPY
 
-EXPOSE 8000
+# define the port on which the container listens for connections
+EXPOSE
 
-CMD ["uvicorn", "main:app", "--proxy-headers", "--host", "0.0.0.0", "--port", "8000"]
+# run python script in container
+CMD
