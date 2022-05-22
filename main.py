@@ -2,6 +2,7 @@ import os
 
 import joblib
 import pandas as pd
+# import uvicorn
 from fastapi import FastAPI
 
 lgbm_model = joblib.load(os.getcwd() + "/model/lgbm_model.joblib")
@@ -57,6 +58,6 @@ def return_prediction(query: int) -> dict:
             "message": f"Failed to select index. Did you provide a number in the range {data.index}?",
         }
 
-
+#
 # if __name__ == "__main__":
 #     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
