@@ -27,14 +27,13 @@ def welcome_message() -> dict:
 
 
 @app.get("/test_numbers")
-def get_index_range() -> dict:
+def get_instructions() -> dict:
     """Get the index range of the saved test set to inform the user about the
     possible indices to generate a prediction for.
     """
-    # data = pd.read_csv(os.getcwd() + "/data/test_set.csv")
     return {
         "status_code": 200,
-        "message": f"Provide any index in the following range to the predict function: {data.index}",
+        "message": f"Provide a row with ",
     }
 
 
@@ -45,10 +44,8 @@ def return_prediction(data: Data) -> dict:
     Args:
         - query: integer with the index of the testset to generate a prediction for
     """
-    # data = pd.read_csv(os.getcwd() + "/data/test_set.csv")
     team_dict = {0: "CT", 1: "T"}
 
-    print("it's doing something")
     data = pd.read_json(data.data, typ="series").to_frame()
 
     data = data.T
