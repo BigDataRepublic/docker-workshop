@@ -12,29 +12,15 @@ enc = joblib.load(os.getcwd() + "/model/encoder.joblib")
 team_dict = {0: "CT", 1: "T"}
 
 
-
 class Data(BaseModel):
     data: str
 
 
-@app.get("/")
-def welcome_message() -> dict:
+def welcome_message() -> str:
     """Welcome message to test the API."""
-    return {"message": "Hello World!"}
+    return "Hello World!"
 
 
-@app.get("/test_numbers")
-def get_instructions() -> dict:
-    """Get the index range of the saved test set to inform the user about the
-    possible indices to generate a prediction for.
-    """
-    return {
-        "status_code": 200,
-        "message": f"Provide a row with ",
-    }
-
-
-@app.post("/predict")
 def return_prediction(data: Data) -> dict:
     """Return a prediction for a single example from the testset with our own ML model.
 
@@ -59,12 +45,7 @@ def return_prediction(data: Data) -> dict:
         predicted_proba = lgbm_model.predict_proba(data)[0][pred]
 
         pred_desc = team_dict[pred[0]]
-        return {
-            "status_code": 200,
-            "message": f"Lgbm model predicts '{pred_desc}' with a probability of {predicted_proba}",
-        }
+        return pred, predicted_proba, pred_desc
+
     except:
-        return {
-            "status_code": 400,
-            "message": f"Something went wrong, please check your request. ",
-        }
+        return None
