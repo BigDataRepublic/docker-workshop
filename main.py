@@ -2,7 +2,6 @@ import os
 
 import joblib
 import pandas as pd
-
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
@@ -30,7 +29,7 @@ def return_prediction(payload: Data) -> dict:
     """Return a prediction for a single example from the testset with our own ML model.
 
     Args:
-        - data: the jsonified row of data for a single example
+        - payload: a json string with data for a single example
     """
     try:
         # load data in correct format
@@ -53,5 +52,7 @@ def return_prediction(payload: Data) -> dict:
         }
 
     except Exception as e:
-        raise HTTPException(status_code=400,
-                            detail=f"Something went wrong, please check your request. Error: {e}")
+        raise HTTPException(
+            status_code=400,
+            detail=f"Something went wrong, please check your request. Error: {e}",
+        )
