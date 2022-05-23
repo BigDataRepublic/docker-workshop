@@ -1,14 +1,12 @@
-import requests
 import os
 
 import pandas as pd
+import requests
 
-data = pd.read_csv(os.getcwd() + "/data/csgo_round_snapshots.csv")
+data = pd.read_csv(os.getcwd() + "/data/test_set.csv")
 
-data = data.drop("round_winner", axis=1)
+random_row = data.loc[1000]
 
-row = data.loc[2]
-
-r = requests.post("http://0.0.0.0:8010/predict", json={"data": row.to_json()})
+r = requests.post("http://0.0.0.0:8000/predict", json={"data": random_row.to_json()})
 
 print(r.text)
