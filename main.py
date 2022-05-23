@@ -14,38 +14,31 @@ def welcome_message() -> dict:
     return {"message": "Hello World!"}
 
 
-def get_index_range() -> dict:
-    """Get the index range of the saved test set to inform the user about the
-    possible indices to generate a prediction for.
-    """
-    data = pd.read_csv(os.getcwd() + "/data/test_set.csv")
-    return {
-        "status_code": 200,
-        "message": f"Provide any index in the following range to the predict function: {data.index}",
-    }
-
-
-def return_prediction(query: int) -> dict:
+def return_prediction(payload) -> dict:
     """Return a prediction for a single example from the testset with our own ML model.
 
     Args:
-        - query: integer with the index of the testset to generate a prediction for
+        - payload: a json string with data for a single example
     """
-    data = pd.read_csv(os.getcwd() + "/data/test_set.csv")
-    enc_df = pd.DataFrame(enc.transform(data[["map"]]).toarray())
-    data = data.join(enc_df)
-    data = data.drop("map", axis=1)
     try:
-        line = data.iloc[query]
-        pred = lgbm_model.predict([line])[0]
-        predicted_proba = lgbm_model.predict_proba([line])[0][pred]
-        pred_desc = team_dict[pred]
+        # load data in correct format
+        data = pd.read_json(payload, typ="series").to_frame()
+        data = data.T
+
+        # transform categorical data with one-hot encoder saved during training process
+        enc_df = pd.DataFrame(enc.transform(data[["map"]]).toarray())
+        data = data.join(enc_df)
+        data = data.drop("map", axis=1)
+        data = data.astype("float")
+
+        # Get prediction
+        pred = lgbm_model.predict(data)
+        predicted_proba = lgbm_model.predict_proba(data)[0][pred]
+        pred_desc = team_dict[pred[0]]
+
         return {
-            "status_code": 200,
             "message": f"Lgbm model predicts '{pred_desc}' with a probability of {predicted_proba}",
         }
-    except IndexError:
-        return {
-            "status_code": 400,
-            "message": f"Failed to select index. Did you provide a number in the range {data.index}?",
-        }
+
+    except Exception as e:
+        raise Exception(f"Something went wrong, please check your request. Error: {e}")
