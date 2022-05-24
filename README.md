@@ -20,4 +20,4 @@ Et voilà! Your end-points should now be approachable via http://0.0.0.0:8000/.
 Tip: visit http://0.0.0.0:8000/docs to make use of the Swagger UI for FastAPI and test your end-points!
 
 ## Come join us!
-Interested to work [with us](https://www.vantage-ai.com/en/team)? Take a look at our vacancies!
+Interested to work [with us](https://www.vantage-ai.com/en/team)? Take a look at our vacancies! And make sure to [follow us](https://www.linkedin.com/company/vantage-ai/) on LinkedIn!
